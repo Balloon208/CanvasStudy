@@ -1,9 +1,11 @@
-let canvas = document.querySelector('canvas')
+let canvas = document.querySelector('canvas') // canvas 구역 들고옴
 
-canvas.width = window.innerWidth;
+canvas.width = window.innerWidth; // 캔버스 넓이 설정
 canvas.height = window.innerHeight;
 
-let c = canvas.getContext('2d');
+let c = canvas.getContext('2d'); // 2d canvas받기
+
+/*
 
 c.fillStyle = "rgba(255, 0, 0, 0.5)"; // 채우기 색 설정
 c.fillRect(100, 100, 100, 100); // 100,100 위치에 100*100size 만큼 채우기
@@ -41,3 +43,89 @@ for(let i = 0; i<100; i++)
     else if(coloring==3) c.strokeStyle = 'yellow';
     c.stroke();
 }
+
+*/
+
+// https://www.youtube.com/watch?v=vxljFhP2krI&list=PLpPnRKq7eNW3We9VdCfx9fprhqXHwTPXL&index=4
+// 13:14 까지
+
+let mouse = {
+    x: undefined,
+    y: undefined
+}
+
+let Maxradius = 50;
+let Minradius = 5;
+
+window.addEventListener('mousemove',
+    function(event){
+    mouse.x = event.x;
+    mouse.y = event.y;
+})
+
+function Circle(x, y, dx, dy, radius){ // 각 원 개체에서 실행되는 함수
+    this.x = x;
+    this.y = y;
+    this.dx = dx;
+    this.dy = dy;
+    this.radius = radius;
+
+    this.draw = function() {
+        c.beginPath();
+        c.arc(this.x, this.y, this.radius, 0, Math.PI / 180 * 360, false);
+        c.strokeStyle = 'white';
+        c.stroke();
+        c.fill();
+    }
+
+    this.update = function() {
+        if(this.x + this.radius > innerWidth || this.x - this.radius < 0)
+        {
+            this.dx = -this.dx;
+        }
+        if(this.y + this.radius > innerHeight || this.y - this.radius < 0)
+        {
+            this.dy = -this.dy;
+        }
+        this.x+=this.dx;
+        this.y+=this.dy;
+
+        // interactive
+        if(mouse.x - this.x < 50 && mouse.x - this.x > -50 && mouse.y - this.y < 50 && mouse.y - this.y > -50){
+            if(this.radius < Maxradius) this.radius +=1 ;
+        }
+        else if(this.radius > Minradius){
+            this.radius -=1;
+        }
+
+        this.draw();
+    }
+
+    
+}
+
+let circleArray = [];
+
+for(let i=0; i<500; i++)
+{
+    let radius = 30;
+    let speed = 1;
+    let x = Math.random() * (innerWidth - radius * 2) + radius; // 범위를 벗어나지 않기 위해 수식을 넣어준다
+    let y = Math.random() * (innerHeight - radius * 2) + radius; 
+    let dx = (Math.random() - 0.5) * speed;
+    let dy = (Math.random() - 0.5) * speed;
+    circleArray.push(new Circle(x, y, dx, dy, radius)); // 함수를 실행시키고, 배열에 해당 개체를 집어 넣는다.
+}
+
+console.log(circleArray);
+
+function animate() {
+    requestAnimationFrame(animate); // 애니메이션 사용 요청 (재귀)
+    c.clearRect(0, 0, innerWidth, innerHeight); // 화면을 비운다.
+    for(let i=0; i<circleArray.length; i++) // 각 개체마다 업데이트를 해주는 함수
+    {
+        circleArray[i].update();
+    }
+}
+
+animate();
