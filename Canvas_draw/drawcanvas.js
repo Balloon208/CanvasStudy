@@ -55,13 +55,28 @@ let mouse = {
 }
 
 let Maxradius = 50;
-let Minradius = 5;
+// let Minradius = 5;
+
+let colorArray = [
+    '#ffaa33',
+    '#99ffaaa',
+    '#00ff00',
+    '#4411aa',
+    '#ff1100'
+]
 
 window.addEventListener('mousemove',
     function(event){
     mouse.x = event.x;
     mouse.y = event.y;
-})
+});
+
+window.addEventListener('resize', function(){
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    init();
+});
 
 function Circle(x, y, dx, dy, radius){ // 각 원 개체에서 실행되는 함수
     this.x = x;
@@ -69,12 +84,15 @@ function Circle(x, y, dx, dy, radius){ // 각 원 개체에서 실행되는 함�
     this.dx = dx;
     this.dy = dy;
     this.radius = radius;
+    this.Minradius = radius;
+    this.color = colorArray[Math.floor(Math.random()*colorArray.length)];
 
     this.draw = function() {
         c.beginPath();
         c.arc(this.x, this.y, this.radius, 0, Math.PI / 180 * 360, false);
         c.strokeStyle = 'white';
         c.stroke();
+        c.fillStyle = this.color;
         c.fill();
     }
 
@@ -94,7 +112,7 @@ function Circle(x, y, dx, dy, radius){ // 각 원 개체에서 실행되는 함�
         if(mouse.x - this.x < 50 && mouse.x - this.x > -50 && mouse.y - this.y < 50 && mouse.y - this.y > -50){
             if(this.radius < Maxradius) this.radius +=1 ;
         }
-        else if(this.radius > Minradius){
+        else if(this.radius > this.Minradius){
             this.radius -=1;
         }
 
@@ -106,15 +124,18 @@ function Circle(x, y, dx, dy, radius){ // 각 원 개체에서 실행되는 함�
 
 let circleArray = [];
 
-for(let i=0; i<500; i++)
-{
-    let radius = 30;
-    let speed = 1;
-    let x = Math.random() * (innerWidth - radius * 2) + radius; // 범위를 벗어나지 않기 위해 수식을 넣어준다
-    let y = Math.random() * (innerHeight - radius * 2) + radius; 
-    let dx = (Math.random() - 0.5) * speed;
-    let dy = (Math.random() - 0.5) * speed;
-    circleArray.push(new Circle(x, y, dx, dy, radius)); // 함수를 실행시키고, 배열에 해당 개체를 집어 넣는다.
+function init(){
+    circleArray = [];
+    for(let i=0; i<1000; i++)
+    {
+        let radius = Math.random() * 3 + 1;
+        let speed = 1;
+        let x = Math.random() * (innerWidth - radius * 2) + radius; // 범위를 벗어나지 않기 위해 수식을 넣어준다
+        let y = Math.random() * (innerHeight - radius * 2) + radius; 
+        let dx = (Math.random() - 0.5) * speed;
+        let dy = (Math.random() - 0.5) * speed;
+        circleArray.push(new Circle(x, y, dx, dy, radius)); // 함수를 실행시키고, 배열에 해당 개체를 집어 넣는다.
+    }
 }
 
 console.log(circleArray);
@@ -129,3 +150,4 @@ function animate() {
 }
 
 animate();
+init();
