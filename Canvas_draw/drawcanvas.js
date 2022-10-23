@@ -46,9 +46,6 @@ for(let i = 0; i<100; i++)
 
 */
 
-// https://www.youtube.com/watch?v=vxljFhP2krI&list=PLpPnRKq7eNW3We9VdCfx9fprhqXHwTPXL&index=4
-// 13:14 까지
-
 let mouse = {
     x: undefined,
     y: undefined
